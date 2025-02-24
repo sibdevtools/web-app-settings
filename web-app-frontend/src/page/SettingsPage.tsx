@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { SelectSetting, Setting, Settings } from '../settings/types';
+import React, { useEffect, useState } from 'react';
+import { Settings } from '../settings/types';
 import { loadSettings, saveSettings } from '../settings/utils';
 import { FloppyDiskIcon } from 'hugeicons-react';
+import { Alert, Button, Col, Container, Form, Row } from 'react-bootstrap';
+import SettingField from '../component/SettingField';
 
 const SettingsPage: React.FC = () => {
   const [settings, setSettings] = useState<Settings>({});
@@ -29,58 +31,38 @@ const SettingsPage: React.FC = () => {
     setShowSaved(true);
   };
 
-  const renderField = (setting: Setting) => {
-    switch (setting.type) {
-      case 'text':
-        return (
-          <input
-            id={setting.key}
-            type="text"
-            className="form-control"
-            value={setting.value}
-            onChange={(e) => handleChange(setting.key, e.target.value)}
-          />
-        );
-      case 'select':
-        const selectSetting = setting as SelectSetting
-        return (
-          <select
-            id={setting.key}
-            className="form-select"
-            value={setting.value}
-            onChange={(e) => handleChange(setting.key, e.target.value)}
-          >
-            {selectSetting.options?.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
-    <div className={'col-md-10 offset-md-1'}>
-      <div className={`alert  alert-dismissible fade show alert-success ${showSaved ? '' : 'd-none'}`} role="alert">
+    <Col md={{ span: 10, offset: 1 }}>
+      <Alert
+        dismissible={true}
+        variant={'success'}
+        className={`fade show ${showSaved ? '' : 'd-none'}`}
+        role="alert"
+      >
         Saved!
-      </div>
-      <form onSubmit={handleSubmit} className="container mt-4">
-        {Object.values(settings).map((setting) => (
-          <div className="mb-3 row" key={setting.key}>
-            <label htmlFor={setting.key} className="form-label col-md-2 col-form-label">{setting.label}</label>
-            <div className="col-sm-10">
-              {renderField(setting)}
-            </div>
-          </div>
-        ))}
-        <button type="submit" className="btn btn-primary float-end">
-          <FloppyDiskIcon />
-        </button>
-      </form>
-    </div>
+      </Alert>
+      <Container>
+        <Form onSubmit={handleSubmit} className="mt-4">
+          {Object.values(settings).map((setting) => (
+            <Row className="mb-3 align-items-center" key={setting.key}>
+              <Col xs={2}>
+                <Form.Label htmlFor={setting.key}>{setting.label}</Form.Label>
+              </Col>
+              <Col xs={10}>
+                <SettingField
+                  setting={setting}
+                  settings={settings}
+                  handleChange={handleChange}
+                />
+              </Col>
+            </Row>
+          ))}
+          <Button variant={'primary'} type="submit" className="float-end">
+            <FloppyDiskIcon />
+          </Button>
+        </Form>
+      </Container>
+    </Col>
   );
 };
 

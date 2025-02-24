@@ -4,7 +4,7 @@ export const getDefaultSettings = (): Settings => {
   return {
     aceTheme: {
       key: 'aceTheme',
-      label: 'Ace theme',
+      label: 'Code editor theme',
       type: 'select',
       value: 'monokai',
       options: [
